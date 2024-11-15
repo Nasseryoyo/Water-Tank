@@ -1,14 +1,21 @@
 #pragma once
 
-#include <stdint.h>
+#include "pico/stdlib.h"
 
-// Function to initialize the ultrasonic sensor
-void UltraSonic_Init(uint trigger_pin, uint echo_pin);
+#ifndef SPEED_OF_SOUND
+// Speed of sound in air (in cm/us)
+#define SPEED_OF_SOUND 0.034
 
-// Function to trigger the ultrasonic sensor
-void UltraSonic_Trigger(void);
+#endif
+// Configuration structure for the ultrasonic sensor
+typedef struct {
+    uint trigger_pin; // GPIO pin connected to the trigger
+    uint echo_pin;    // GPIO pin connected to the echo
+} UltraSonicConfig;
 
-// Function to get the distance measured by the ultrasonic sensor
-uint16_t UltraSonic_GetDistance(void);
+// Initializes the ultrasonic sensor with the given configuration
+void ultrasonic_init(UltraSonicConfig *config);
 
+// Measures the distance in centimeters
+float ultrasonic_get_distance(UltraSonicConfig *config);
 

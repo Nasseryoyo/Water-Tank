@@ -33,10 +33,18 @@ project(WaterTank C CXX ASM)
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
+# Find all source files in the Drivers folder and its subdirectories
+file(GLOB_RECURSE DRIVERS_SOURCES "${CMAKE_CURRENT_LIST_DIR}/Drivers/**/*.c")
+
+# Add the main source file
+set(SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/WaterTank.c"
+    ${DRIVERS_SOURCES}
+)
+
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(WaterTank WaterTank.c )
-
+add_executable(WaterTank ${SOURCES})
 pico_set_program_name(WaterTank "WaterTank")
 pico_set_program_version(WaterTank "0.1")
 
