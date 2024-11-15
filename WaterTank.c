@@ -1,26 +1,25 @@
-#include <stdio.h>
-#include "./Drivers/Sensors/UltraSonic/UltraSonic.h"
+/**
+ * Copyright (c) 2020 Raspberry Pi (Trading) Ltd.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+#include <Drivers/Actuators/LED/LED.h>
 #include "pico/stdlib.h"
-#include "pico/cyw43_arch.h"
-
-
-
 
 int main()
 {
-    stdio_init_all();
+    int rc = pico_led_init();
+    hard_assert(rc == PICO_OK);
 
-    // Initialise the Wi-Fi chip
-    if (cyw43_arch_init()) {
-        printf("Wi-Fi init failed\n");
-        return -1;
+
+
+    while (true)
+    {
+        pico_set_led(true);
+
+        sleep_ms(LED_DELAY_MS);
+        pico_set_led(false);
+        }
+    return 0;
     }
-
-    // Example to turn on the Pico W LED
-    cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
-
-    while (true) {
-        printf("Hello, world!\n");
-        sleep_ms(1000);
-    }
-}
