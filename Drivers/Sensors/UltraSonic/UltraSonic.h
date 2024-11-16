@@ -7,8 +7,8 @@
 
 
 // Define the pins for the ultrasonic sensor
-#define TRIG_PIN 2
-#define ECHO_PIN 3
+#define TRIG_PIN 8
+#define ECHO_PIN 9
 
 // Function to initialize the ultrasonic sensor
 void ultrasonic_init(void);
