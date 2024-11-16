@@ -37,8 +37,10 @@
   "raspberry-pi-pico.cmakePath": "${HOME}/.pico-sdk/cmake/v3.28.6/bin/cmake",
   "raspberry-pi-pico.ninjaPath": "${HOME}/.pico-sdk/ninja/v1.12.1/ninja",
   "files.associations": {
+    "*.css": "tailwindcss",
     "stdlib.h": "c",
     "uart.h": "c",
-    "ultrasonic.h": "c"
+    "ultrasonic.h": "c",
+    "*.tcc": "c"
   }
 }
