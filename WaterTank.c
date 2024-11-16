@@ -5,7 +5,7 @@
 #include <Drivers/Actuators/LCD/LCD.h>
 #include <Drivers/Sensors/UltraSonic/UltraSonic.h>
 
-#include <pico / stdlib.h>
+#include <pico/stdlib.h>
 #include <Drivers/Actuators/LED/LED.h>
 #include <Drivers/Actuators/LCD/LCD.h>
 #include <Drivers/Actuators/Buzzer/Buzzer.h>
