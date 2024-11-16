@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <pico/stdlib.h>
 #include <Drivers/Actuators/LED/LED.h>
 #include <Drivers/Actuators/LCD/LCD.h>
@@ -29,12 +30,14 @@ int main()
         {
             lcd_set_cursor(0, 0);
             lcd_print("No echo detected");
+            printf("No echo detected\n");
             buzzer_on();
         }
         else
         {
             char buffer[16];
             snprintf(buffer, sizeof(buffer), "Distance: %u cm", distance);
+            printf("%s\n", buffer);
             lcd_set_cursor(0, 0);
             lcd_print(buffer);
             buzzer_off();
