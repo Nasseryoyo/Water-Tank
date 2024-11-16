@@ -42,6 +42,7 @@
     "uart.h": "c",
     "ultrasonic.h": "c",
     "*.tcc": "c",
-    "led.h": "c"
+    "led.h": "c",
+    "buzzer.h": "c"
   }
 }

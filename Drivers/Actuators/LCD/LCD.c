@@ -1,5 +1,5 @@
-#include "LCD.h"
-#include <pico/stdlib.h>
+#include <Drivers/Actuators/LCD/LCD.h>
+
 
 // Helper function to send a nibble to the LCD
 static void lcd_send_nibble(uint8_t nibble)

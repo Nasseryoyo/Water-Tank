@@ -2,9 +2,6 @@
 
 #include <pico/stdlib.h>
 
-#ifndef LCD_H
-#define LCD_H
-
 // Define the pins for the LCD
 #define LCD_RS 2
 #define LCD_EN 3
@@ -23,4 +20,17 @@
 #define LCD_SET_CGRAM_ADDR 0x40
 #define LCD_SET_DDRAM_ADDR 0x80
 
-#endif // LCD_H
+static void lcd_send_nibble(uint8_t nibble);
+
+void lcd_send_command(uint8_t command);
+
+void lcd_send_data(uint8_t data);
+
+void lcd_init(void);
+
+void lcd_clear(void);
+
+void lcd_set_cursor(uint8_t row, uint8_t col);
+
+void lcd_print(const char* str);
+
