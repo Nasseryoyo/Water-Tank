@@ -44,7 +44,7 @@ int main()
 
     return 0;
 }
-nt main()
+int main()
 {
     // Period for ultrasonic sensor needs to be at least 20ms or
     // else it may have an error at the rated 2m range
