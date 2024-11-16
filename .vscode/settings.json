@@ -41,6 +41,7 @@
     "stdlib.h": "c",
     "uart.h": "c",
     "ultrasonic.h": "c",
-    "*.tcc": "c"
+    "*.tcc": "c",
+    "led.h": "c"
   }
 }
