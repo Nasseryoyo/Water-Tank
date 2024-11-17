@@ -12,6 +12,27 @@
 
 #endif 
 
+#ifndef ULTRASONIC_MIN_DISTANCE
+#define ULTRASONIC_MIN_DISTANCE 2.0f
+#endif
+
+#ifndef ULTRASONIC_MAX_DISTANCE
+#define ULTRASONIC_MAX_DISTANCE 400.0f
+#endif
+
+#ifndef ULTRASONIC_ERROR_TIMEOUT_START
+#define ULTRASONIC_ERROR_TIMEOUT_START -1
+#endif
+
+#ifndef ULTRASONIC_ERROR_TIMEOUT_END
+#define ULTRASONIC_ERROR_TIMEOUT_END -2
+#endif
+
+#ifndef ULTRASONIC_ERROR_OUT_OF_RANGE
+#define ULTRASONIC_ERROR_OUT_OF_RANGE -3
+#endif
+
+
 // Initializes the ultrasonic sensor
 void ultrasonic_sensor_init(uint trig_pin, uint echo_pin);
 

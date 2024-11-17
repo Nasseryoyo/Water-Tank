@@ -26,7 +26,7 @@ float ultrasonic_get_distance() {
     while (gpio_get(echo_pin) == 0) {
         if ((time_us_32() - start_time) > ULTRASONIC_TIMEOUT) { // Timeout: 200 ms
             printf("[DEBUG] Ultrasonic sensor timeout: Echo pin never went HIGH.\n");
-            return -1.0; // Indicate error
+            return ULTRASONIC_ERROR_TIMEOUT_START; // Indicate error
         }
     }
 
@@ -37,7 +37,7 @@ float ultrasonic_get_distance() {
     while (gpio_get(echo_pin) == 1) {
         if ((time_us_32() - echo_start_time) > ULTRASONIC_TIMEOUT) { // Timeout: 200 ms
             printf("[DEBUG] Ultrasonic sensor timeout: Echo pin never went LOW.\n");
-            return -2.0; // Indicate error
+            return ULTRASONIC_ERROR_TIMEOUT_END; // Indicate error
         }
     }
 
@@ -46,12 +46,12 @@ float ultrasonic_get_distance() {
 
     // Calculate duration and distance
     float duration = (float)(echo_end_time - echo_start_time);
-    float distance = (duration / 2.0f) * 0.0343f; // Speed of sound in cm/us
+    float distance = (duration / 2.0f) * SPEED_OF_SOUND; // Speed of sound in cm/us
 
     // Validate distance
-    if (distance < 2.0 || distance > 400.0) { // HC-SR04 range: 2 cm - 400 cm
+    if (distance < ULTRASONIC_MIN_DISTANCE || distance > ULTRASONIC_MAX_DISTANCE ) { // HC-SR04 range: 2 cm - 400 cm
         printf("[DEBUG] Ultrasonic sensor error: Measured distance %.2f cm is out of range.\n", distance);
-        return -3.0; // Indicate invalid distance
+        return ULTRASONIC_ERROR_OUT_OF_RANGE; // Indicate error
     }
 
     return distance;
