@@ -43,6 +43,7 @@
     "ultrasonic.h": "c",
     "*.tcc": "c",
     "led.h": "c",
-    "buzzer.h": "c"
+    "buzzer.h": "c",
+    "waterlevel.h": "c"
   }
 }

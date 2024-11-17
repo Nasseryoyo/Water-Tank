@@ -1,17 +1,19 @@
 #include "Buzzer.h"
 
-void buzzer_init(void)
-{
-    gpio_init(BUZZER_PIN);
-    gpio_set_dir(BUZZER_PIN, GPIO_OUT);
+static uint buzzer_pin;
+
+void buzzer_init(uint pin){
+    buzzer_pin = pin;
+    gpio_init(buzzer_pin);
+    gpio_set_dir(buzzer_pin, GPIO_OUT);
 }
 
 void buzzer_on(void)
 {
-    gpio_put(BUZZER_PIN, 1);
+    gpio_put(buzzer_pin, 1);
 }
 
 void buzzer_off(void)
 {
-    gpio_put(BUZZER_PIN, 0);
+    gpio_put(buzzer_pin, 0);
 }
