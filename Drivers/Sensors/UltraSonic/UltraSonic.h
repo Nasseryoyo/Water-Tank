@@ -1,17 +1,21 @@
 #pragma once
 
 #include <pico/stdlib.h>
-#include <time.h>
-#include <unistd.h>
-#include <pico/stdio.h>
+#include <stdio.h>
 
+#ifndef SPEED_OF_SOUND
+#define SPEED_OF_SOUND 0.0343f
+#endif
 
-// Define the pins for the ultrasonic sensor
-#define TRIG_PIN 8
-#define ECHO_PIN 9
+#ifndef ULTRASONIC_TIMEOUT
+#define ULTRASONIC_TIMEOUT 200000 // 200 ms
 
-// Function to initialize the ultrasonic sensor
-void ultrasonic_init(void);
+#endif 
 
-// Function to get the distance measured by the ultrasonic sensor
-uint16_t ultrasonic_get_distance(void);
+// Initializes the ultrasonic sensor
+void ultrasonic_sensor_init(uint trig_pin, uint echo_pin);
+
+// Measures the distance using the ultrasonic sensor
+// Returns distance in cm
+float ultrasonic_get_distance();
+
