@@ -11,6 +11,9 @@
 #include <Drivers/Sensors/UltraSonic/UltraSonic.h>
 #include <Drivers/Sensors/WaterLevel/WaterLevel.h>
 
+// Communication Drivers
+#include <Drivers/Communication/uart_communication.h>
+
 // Define the pins for the water level sensor
 #define WATER_LEVEL_PIN 4
 
@@ -23,6 +26,13 @@
 
 // Define the GPIO pin connected to the pump
 #define PUMP_PIN 5
+
+// Define the UART parameters
+#define UART_BAUD_RATE 9600
+#define UART_ID uart0
+#define TX_PIN 0
+#define RX_PIN 1
+
 
 int main() {
     // Period for ultrasonic sensor needs to be at least 20ms or
@@ -38,10 +48,12 @@ int main() {
     lcd_clear();
 
     // Initialize the Sensors
-    ultrasonic_sensor_init(TRIG_PIN, ECHO_PIN); // Initialize the ultrasonic sensor
-    water_level_sensor_init(WATER_LEVEL_PIN);  // Initialize the water level sensor
+    ultrasonic_sensor_init(TRIG_PIN, ECHO_PIN);  // Initialize the ultrasonic sensor
+    water_level_sensor_init(WATER_LEVEL_PIN);    // Initialize the water level sensor
 
-    stdio_init_all(); // Initialize stdio for debugging
+    stdio_init_all();  // Initialize stdio for debugging
+
+    uart_init_config(UART_ID,TX_PIN,RX_PIN,UART_BAUD_RATE);  // Initialize UART for communication
 
     while (true) {
         pico_set_led(true);
@@ -52,8 +64,9 @@ int main() {
             lcd_set_cursor(0, 0);
             lcd_print("Tank is Full");
             printf("Tank is Full\n");
-            buzzer_off(); // No need for alarm
-            pump_off();   // Turn off the pump
+            uart_send_message("Tank is Full");  // Send message via UART
+            buzzer_off();  // No need for alarm
+            pump_off();    // Turn off the pump
         } else {
             // Measure distance using ultrasonic sensor
             uint16_t distance = ultrasonic_get_distance();
@@ -64,6 +77,7 @@ int main() {
                 lcd_set_cursor(0, 0);
                 lcd_print("No echo detected");
                 printf("No echo detected\n");
+                uart_send_message("No echo detected");  // Send error via UART
                 buzzer_on();
             } else {
                 // Check if the tank is empty
@@ -71,6 +85,7 @@ int main() {
                     lcd_set_cursor(0, 0);
                     lcd_print("Tank is Empty");
                     printf("Tank is Empty\n");
+                    uart_send_message("Tank is Empty");  // Send message via UART
                     buzzer_on();  // Alarm for empty tank
                     pump_on();   // Turn on the pump
                 } else {
@@ -80,13 +95,14 @@ int main() {
                     printf("%s\n", buffer);
                     lcd_set_cursor(0, 0);
                     lcd_print(buffer);
+                    uart_send_message(buffer);  // Send water level via UART
                     buzzer_off();  // No alarm
                     pump_off();    // Turn off the pump
                 }
             }
         }
 
-        sleep_ms(500); // Delay for readability
+        sleep_ms(500);  // Delay for readability
         sleep_ms(us_period);
         pico_set_led(false);
     }
