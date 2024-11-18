@@ -4,9 +4,7 @@
             "name": "Pico",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/Drivers/**",
-                "${userHome}/.pico-sdk/sdk/2.0.0/**",
-                "${workspaceFolder}/build/generated/pico_base"
+                "${userHome}/.pico-sdk/sdk/2.0.0/**"
             ],
             "forcedInclude": [
                 "${userHome}/.pico-sdk/sdk/2.0.0/src/common/pico_base_headers/include/pico.h",
