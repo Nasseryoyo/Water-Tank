@@ -50,10 +50,18 @@ pico_sdk_init()
 # Find all source files in the Drivers folder and its subdirectories
 file(GLOB_RECURSE DRIVERS_SOURCES "${CMAKE_CURRENT_LIST_DIR}/Drivers/**/*.c")
 
+# Find all header files in the Drivers folder and its subdirectories
+file(GLOB_RECURSE DRIVERS_HEADERS "${CMAKE_CURRENT_LIST_DIR}/Drivers/**/*.h")
+
 # Add the main source file
 set(SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/WaterTank.c"
     ${DRIVERS_SOURCES}
+)
+
+# Add the main header file
+set(HEADERS
+    ${DRIVERS_HEADERS}
 )
 
 # Add executable. Default name is the project name, version 0.1
@@ -63,7 +71,7 @@ pico_set_program_name(WaterTank "WaterTank")
 pico_set_program_version(WaterTank "0.1")
 
 # Modify the below lines to enable/disable output over UART/USB
-pico_enable_stdio_uart(WaterTank 0)
+pico_enable_stdio_uart(WaterTank 1)
 pico_enable_stdio_usb(WaterTank 1)
 
 # Add the standard library to the build
@@ -73,6 +81,7 @@ target_link_libraries(WaterTank
 # Add the standard include files to the build
 target_include_directories(WaterTank PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}
+    ${CMAKE_CURRENT_LIST_DIR}/Drivers
 )
 
 # Add any user requested libraries
