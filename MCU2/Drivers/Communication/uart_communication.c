@@ -8,21 +8,25 @@ static  uint UART_BAUD_RATE;
 
 
 // Initialize UART
-void uart_init_config(uart_inst_t* uart_id, uint pin_tx, uint pin_rx, uint baud_rate) {
+uint uart_init_config(uart_inst_t* uart_id, uint pin_tx, uint pin_rx, uint baud_rate) {
     // set the UART parameters
     UART_ID = uart_id;
     TX_PIN = pin_tx;
     RX_PIN = pin_rx;
     UART_BAUD_RATE = baud_rate;
 
-    uart_init(UART_ID, UART_BAUD_RATE);  // Initialize UART
+    UART_BAUD_RATE = uart_init(UART_ID, UART_BAUD_RATE);  // Initialize UART
     gpio_set_function(TX_PIN, GPIO_FUNC_UART);  // Set TX pin for UART
     gpio_set_function(RX_PIN, GPIO_FUNC_UART);  // Set RX pin for UART
-    
+    gpio_pull_up(RX_PIN);
+    // Enable UART FIFO
+    uart_set_fifo_enabled(UART_ID, true);
+    // Set UART data format
+    return UART_BAUD_RATE;
     }
 
 // Send a message over UART
-void uart_send_message(const char* message) {
+void uart_send_message( char* message) {
     // Send the message character by character
     while (*message) {
         uart_putc(UART_ID, *message);

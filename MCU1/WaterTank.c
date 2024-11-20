@@ -3,8 +3,6 @@
 
 // Actuator Drivers
 #include <Drivers/Actuators/LED/LED.h>
-#include <Drivers/Actuators/LCD/LCD.h>
-#include <Drivers/Actuators/Buzzer/Buzzer.h>
 #include <Drivers/Actuators/Pump/Pump.h>
 
 // Sensor Drivers
@@ -15,17 +13,14 @@
 #include <Drivers/Communication/uart_communication.h>
 
 // Define the pins for the water level sensor
-#define WATER_LEVEL_PIN 4
+#define WATER_LEVEL_PIN 9
 
 // Define the pins for the ultrasonic sensor
-#define TRIG_PIN 2
-#define ECHO_PIN 3
-
-// Define the GPIO pin for the buzzer
-#define BUZZER_PIN 15
+#define TRIG_PIN 15
+#define ECHO_PIN 14
 
 // Define the GPIO pin connected to the pump
-#define PUMP_PIN 5
+#define PUMP_PIN 18
 
 // Define the UART parameters
 #define UART_BAUD_RATE 9600
@@ -40,63 +35,45 @@ int main() {
     const uint32_t us_period = 30;
 
     // Initialize actuators
-    buzzer_init(BUZZER_PIN);
+
     pump_init(PUMP_PIN);
-    lcd_init();
+
     int rc = pico_led_init();
     hard_assert(rc == PICO_OK);
-    lcd_clear();
 
     // Initialize the Sensors
     ultrasonic_sensor_init(TRIG_PIN, ECHO_PIN);  // Initialize the ultrasonic sensor
     water_level_sensor_init(WATER_LEVEL_PIN);    // Initialize the water level sensor
 
-    stdio_init_all();  // Initialize stdio for debugging
+    stdio_usb_init();
 
-    uart_init_config(UART_ID,TX_PIN,RX_PIN,UART_BAUD_RATE);  // Initialize UART for communication
+    // Initialize UART
+   uint bandRate = uart_init_config(UART_ID,TX_PIN,RX_PIN,UART_BAUD_RATE);  // Initialize UART for communication
 
     while (true) {
         pico_set_led(true);
 
+        printf("UART Initialized on Baud rate : %d\n",bandRate);  // Print message via stdio
+
         // Check if the tank is full
         if (is_tank_full()) {
-            lcd_clear();
-            lcd_set_cursor(0, 0);
-            lcd_print("Tank is Full");
-            printf("Tank is Full\n");
-            uart_send_message("Tank is Full");  // Send message via UART
-            buzzer_off();  // No need for alarm
+            uart_send_message("3 Water level is high \n");  // Send message via UART
             pump_off();    // Turn off the pump
         } else {
             // Measure distance using ultrasonic sensor
             uint16_t distance = ultrasonic_get_distance();
-            lcd_clear();
 
             // Check if the ultrasonic sensor has an error
             if (distance == (uint16_t)-1) {
-                lcd_set_cursor(0, 0);
-                lcd_print("No echo detected");
-                printf("No echo detected\n");
-                uart_send_message("No echo detected");  // Send error via UART
-                buzzer_on();
-            } else {
+                uart_send_message("4 Ultrasonic sensor error\n");  // Send error via UART
+                }
+            else {
                 // Check if the tank is empty
                 if (distance > 30) { // 30 cm is the maximum distance for the tank
-                    lcd_set_cursor(0, 0);
-                    lcd_print("Tank is Empty");
-                    printf("Tank is Empty\n");
-                    uart_send_message("Tank is Empty");  // Send message via UART
-                    buzzer_on();  // Alarm for empty tank
+                    uart_send_message("1 Water level is low\n");  // Send message via UART
                     pump_on();   // Turn on the pump
                 } else {
-                    // Display the water level
-                    char buffer[16];
-                    snprintf(buffer, sizeof(buffer), "Water: %u cm", distance);
-                    printf("%s\n", buffer);
-                    lcd_set_cursor(0, 0);
-                    lcd_print(buffer);
-                    uart_send_message(buffer);  // Send water level via UART
-                    buzzer_off();  // No alarm
+                    uart_send_message("2 Water level is normal\n"); // Send water level via UART
                     pump_off();    // Turn off the pump
                 }
             }

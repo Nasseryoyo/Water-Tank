@@ -31,22 +31,50 @@ int main() {
     lcd_clear();
 
  
-    stdio_init_all(); // Initialize stdio for debugging
+    stdio_usb_init(); // Initialize stdio for debugging
 
     // Initialize the UART communication
-    uart_init_config(UART_ID, TX_PIN, RX_PIN, UART_BAUD_RATE);
+    uint bandRate = uart_init_config(UART_ID, TX_PIN, RX_PIN, UART_BAUD_RATE);
 
     while (true) {
         pico_set_led(true);
 
+        printf("UART Initialized on Baud rate : %d\n",bandRate);  // Print message via stdio
+
+
         // receive a message over UART
         char* received_msg = uart_receive_message();
-        if (received_msg != NULL) {
+        if(received_msg != NULL) {
             printf("Received message: %s\n", received_msg);
+            switch (received_msg[0]) {
+            case '1':
+                lcd_clear();
+                lcd_print("Water level is low");
+                printf("Water level is low\n");
+                buzzer_on();
+                break;
+            case '2':
+                lcd_clear();
+                lcd_print("Water level is normal");
+                printf("Water level is normal\n");
+                buzzer_off();
+                break;
+            case '3':
+                lcd_clear();
+                lcd_print("Water level is high");
+                printf("Water level is high\n");
+                buzzer_on();
+                break;
+            default:
+                lcd_clear();
+                lcd_print("Invalid message");
+                printf("Invalid message\n");
+                buzzer_on();
+                break;
+        }
             }
-        else {
-            printf("No message received\n");
-            }
+
+        
         sleep_ms(1000);
         pico_set_led(false);
     }

@@ -4,10 +4,10 @@
 #include <pico/stdlib.h>
 
 // Function to initialize UART
-void uart_init_config(uart_inst_t* uart_id,uint pin_tx, uint pin_rx, uint baud_rate);
+uint uart_init_config(uart_inst_t* uart_id,uint pin_tx, uint pin_rx, uint baud_rate);
 
 // Function to send a message over UART
-void uart_send_message(const char* message);
+void uart_send_message( char* message);
 
 // Function to receive a message over UART
 char* uart_receive_message();
