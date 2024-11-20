@@ -15,14 +15,16 @@
 #define BUZZER_PIN 15
 
 // Define the GPIO pins for the LCD
-#define LCD_PIN_RS 5
-#define LCD_PIN_E  6
-#define LCD_PIN_D4 7
-#define LCD_PIN_D5 8
-#define LCD_PIN_D6 9
-#define LCD_PIN_D7 10
-#define LCD_BL_PIN 13  // For backlight control (optional)
 
+#define LCD_PIN_D4 6
+#define LCD_PIN_D5 7
+#define LCD_PIN_D6 8
+#define LCD_PIN_D7 9
+
+#define LCD_BL_PIN 10  // For backlight control (optional)
+
+#define LCD_PIN_RS 11
+#define LCD_PIN_E  12
 // Define the UART parameters
 #define UART_BAUD_RATE 9600
 #define UART_ID uart0
