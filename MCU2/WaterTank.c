@@ -14,21 +14,29 @@
 // Define the GPIO pin for the buzzer
 #define BUZZER_PIN 15
 
+// Define the GPIO pins for the LCD
+#define LCD_PIN_RS 5
+#define LCD_PIN_E  6
+#define LCD_PIN_D4 7
+#define LCD_PIN_D5 8
+#define LCD_PIN_D6 9
+#define LCD_PIN_D7 10
+#define LCD_BL_PIN 13  // For backlight control (optional)
+
 // Define the UART parameters
 #define UART_BAUD_RATE 9600
 #define UART_ID uart0
 #define TX_PIN 0
 #define RX_PIN 1
 
+LCDdisplay lcd;
 
 int main() {
 
     // Initialize actuators
     buzzer_init(BUZZER_PIN);
-    lcd_init();
     int rc = pico_led_init();
     hard_assert(rc == PICO_OK);
-    lcd_clear();
 
  
     stdio_usb_init(); // Initialize stdio for debugging
@@ -36,38 +44,51 @@ int main() {
     // Initialize the UART communication
     uint bandRate = uart_init_config(UART_ID, TX_PIN, RX_PIN, UART_BAUD_RATE);
 
+    // Initialize the LCD display
+    LCDdisplay_init_with_bl(&lcd,
+        LCD_PIN_D4,
+        LCD_PIN_D5,
+        LCD_PIN_D6,
+        LCD_PIN_D7,
+        LCD_PIN_RS,
+        LCD_PIN_E,
+        LCD_BL_PIN,
+        16, 2);  // 16x2 LCD
+
     while (true) {
         pico_set_led(true);
 
         printf("UART Initialized on Baud rate : %d\n",bandRate);  // Print message via stdio
 
-
+        // Clear the LCD and display a welcome message
+        LCDdisplay_clear(&lcd);
+        LCDdisplay_print(&lcd, "Waiting for UART");
         // receive a message over UART
         char* received_msg = uart_receive_message();
         if(received_msg != NULL) {
             printf("Received message: %s\n", received_msg);
+
+            // Clear LCD and display appropriate messages
+            LCDdisplay_clear(&lcd);
+
             switch (received_msg[0]) {
             case '1':
-                lcd_clear();
-                lcd_print("Water level is low");
+                LCDdisplay_print(&lcd, "Water level: Low");
                 printf("Water level is low\n");
                 buzzer_on();
                 break;
             case '2':
-                lcd_clear();
-                lcd_print("Water level is normal");
+                LCDdisplay_print(&lcd, "Water level: Normal");
                 printf("Water level is normal\n");
                 buzzer_off();
                 break;
             case '3':
-                lcd_clear();
-                lcd_print("Water level is high");
+                LCDdisplay_print(&lcd, "Water level: High");
                 printf("Water level is high\n");
                 buzzer_on();
                 break;
             default:
-                lcd_clear();
-                lcd_print("Invalid message");
+                LCDdisplay_print(&lcd, "Invalid message");
                 printf("Invalid message\n");
                 buzzer_on();
                 break;

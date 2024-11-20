@@ -1,36 +1,43 @@
 #pragma once
 
+#include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
 #include <pico/stdlib.h>
+#include <pico/time.h>
+#include "hardware/pwm.h"
 
-// Define the pins for the LCD
-#define LCD_RS 2
-#define LCD_EN 3
-#define LCD_D4 4
-#define LCD_D5 5
-#define LCD_D6 6
-#define LCD_D7 7
+// Pin positions in LCDpins array
+#define RS 4
+#define E 5
+// Pin values
+#define HIGH 1
+#define LOW 0
+// LCD pin RS meaning
+#define COMMAND 0
+#define DATA 1
 
-// LCD commands
-#define LCD_CLEAR_DISPLAY 0x01
-#define LCD_RETURN_HOME 0x02
-#define LCD_ENTRY_MODE_SET 0x04
-#define LCD_DISPLAY_CONTROL 0x08
-#define LCD_CURSOR_SHIFT 0x10
-#define LCD_FUNCTION_SET 0x20
-#define LCD_SET_CGRAM_ADDR 0x40
-#define LCD_SET_DDRAM_ADDR 0x80
+typedef struct {
+    uint32_t LCDpins[6];
+    uint32_t LCDmask;
+    uint32_t LCDmask_c;
+    uint32_t bl_pwm_pin;
+    int no_chars;
+    int no_lines;
+    bool cursor_status[2];
+} LCDdisplay;
 
-static void lcd_send_nibble(uint8_t nibble);
-
-void lcd_send_command(uint8_t command);
-
-void lcd_send_data(uint8_t data);
-
-void lcd_init(void);
-
-void lcd_clear(void);
-
-void lcd_set_cursor(uint8_t row, uint8_t col);
-
-void lcd_print(const char* str);
-
+// Function prototypes
+void LCDdisplay_init(LCDdisplay* lcd, int bit4_pin, int bit5_pin, int bit6_pin, int bit7_pin, int rs_pin, int e_pin, int width, int depth);
+void LCDdisplay_init_with_bl(LCDdisplay* lcd, int bit4_pin, int bit5_pin, int bit6_pin, int bit7_pin, int rs_pin, int e_pin, int bl_pin, int width, int depth);
+void LCDdisplay_clear(LCDdisplay* lcd);
+void LCDdisplay_cursor_off(LCDdisplay* lcd);
+void LCDdisplay_cursor_on(LCDdisplay* lcd);
+void LCDdisplay_cursor_on_blink(LCDdisplay* lcd, bool blink);
+void LCDdisplay_display_off(LCDdisplay* lcd);
+void LCDdisplay_display_on(LCDdisplay* lcd);
+void LCDdisplay_set_backlight(LCDdisplay* lcd, int brightness);
+void LCDdisplay_init_display(LCDdisplay* lcd);
+void LCDdisplay_goto_pos(LCDdisplay* lcd, int pos_i, int line);
+void LCDdisplay_print(LCDdisplay* lcd, const char* str);
+void LCDdisplay_print_wrapped(LCDdisplay* lcd, const char* str);

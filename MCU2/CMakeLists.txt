@@ -89,6 +89,11 @@ target_include_directories(WaterTank PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}
 )
 
+# Add your source files here
+
+include_directories(${PICO_SDK_PATH}/src/rp2_common/hardware_pwm/include)
+
+
 # Add any user requested libraries
 target_link_libraries(WaterTank 
         pico_cyw43_arch_none
