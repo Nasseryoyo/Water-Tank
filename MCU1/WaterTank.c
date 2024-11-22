@@ -82,16 +82,16 @@ int main() {
                 uart_send_message("4 Ultrasonic sensor error\n");  // Send error via UART
                 clock_t end_comm = clock();
                 double comm_time = (double)(end_comm - start_comm) / CLOCKS_PER_SEC;
-                printf("UART Communication Time: %f seconds\n", comm_time);
+                // printf("UART Communication Time: %f seconds\n", comm_time);
                 }
             else {
                 // Check if the tank is empty
-                if (distance > 30) { // 30 cm is the maximum distance for the tank
+                if (distance > 15) { // 15 cm is the maximum distance for the tank
                     clock_t start_comm = clock();
                     uart_send_message("1 Water level is low\n");  // Send message via UART
                     clock_t end_comm = clock();
                     double comm_time = (double)(end_comm - start_comm) / CLOCKS_PER_SEC;
-                    //printf("UART Communication Time: %f seconds\n", comm_time);
+                    // printf("UART Communication Time: %f seconds\n", comm_time);
                     pump_on();   // Turn on the pump
                     }
                 else {
@@ -99,7 +99,7 @@ int main() {
                     uart_send_message("2 Water level is normal\n"); // Send water level via UART
                     clock_t end_comm = clock();
                     double comm_time = (double)(end_comm - start_comm) / CLOCKS_PER_SEC;
-                    //printf("UART Communication Time: %f seconds\n", comm_time);
+                    // printf("UART Communication Time: %f seconds\n", comm_time);
                     pump_off();    // Turn off the pump
                 }
             }
