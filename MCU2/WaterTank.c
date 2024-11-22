@@ -21,11 +21,10 @@
 #define LCD_PIN_D5 7
 #define LCD_PIN_D6 8
 #define LCD_PIN_D7 9
-
-#define LCD_BL_PIN 10  // For backlight control (optional)
-
+#define LCD_BL_PIN 10 // For backlight control (optional)
 #define LCD_PIN_RS 11
-#define LCD_PIN_E  12
+#define LCD_PIN_E 12
+
 // Define the UART parameters
 #define UART_BAUD_RATE 9600
 #define UART_ID uart0
@@ -34,8 +33,8 @@
 
 LCDdisplay lcd;
 
-int main() {
-
+int main()
+{
     // Initialize actuators
     buzzer_init(BUZZER_PIN);
     LED_Strip_init(LED_Strip_PIN);
@@ -49,36 +48,43 @@ int main() {
 
     // Initialize the LCD display
     LCDdisplay_init_with_bl(&lcd,
-        LCD_PIN_D4,
-        LCD_PIN_D5,
-        LCD_PIN_D6,
-        LCD_PIN_D7,
-        LCD_PIN_RS,
-        LCD_PIN_E,
-        LCD_BL_PIN,
-        16, 2);  // 16x2 LCD
+                            LCD_PIN_D4,
+                            LCD_PIN_D5,
+                            LCD_PIN_D6,
+                            LCD_PIN_D7,
+                            LCD_PIN_RS,
+                            LCD_PIN_E,
+                            LCD_BL_PIN,
+                            16, 2); // 16x2 LCD
+
+    // Initialize the LCD display
+    LCDdisplay_init_display(&lcd);
 
     LCDdisplay_init_display(&lcd);
 
     while (true) {
         pico_set_led(true);
-        printf("UART Initialized on Baud rate : %d\n", bandRate);  // Print message via stdio
+
+        printf("UART Initialized on Baud rate : %d\n",bandRate);  // Print message via stdio
 
         // Clear the LCD and display a welcome message
         LCDdisplay_clear(&lcd);
         LCDdisplay_print(&lcd, "Waiting for UART");
+
         // receive a message over UART
         clock_t start = clock();
-        char* received_msg = uart_receive_message();
+        char *received_msg = uart_receive_message();
         clock_t end = clock();
         printf("Time taken to receive message: %f\n", (double)(end - start) / CLOCKS_PER_SEC);
-        if (received_msg != NULL) {
+        if  (received_msg != NULL)
+        {
             printf("Received message: %s\n", received_msg);
 
             // Clear LCD and display appropriate messages
             LCDdisplay_clear(&lcd);
 
-            switch (received_msg[0]) {
+            switch (received_msg[0])
+            {
             case '1':
                 LCDdisplay_print(&lcd, "Water level:");
                 LCDdisplay_goto_pos(&lcd, 0, 1);
