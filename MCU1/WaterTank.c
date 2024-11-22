@@ -69,6 +69,7 @@ int main() {
             pump_off();    // Turn off the pump
         } else {
             // Measure distance using ultrasonic sensor
+            bool ir_detect = ir_sensor_detect();
             clock_t start_sensor = clock();
             uint16_t distance = ultrasonic_get_distance();
             clock_t end_sensor = clock();
