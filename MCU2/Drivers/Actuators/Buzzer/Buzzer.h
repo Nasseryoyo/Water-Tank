@@ -1,16 +1,13 @@
 #pragma once
 
 #include "pico/stdlib.h"
+#include "hardware/pwm.h"
 
-
-
-
-
-// Initialize the buzzer
+// Initialize the buzzer with PWM
 void buzzer_init(uint pin);
 
-// Turn on the buzzer
-void buzzer_on(void);
+// Play a tone on the buzzer with a specific frequency (Hz)
+void buzzer_play_tone(uint frequency);
 
-// Turn off the buzzer
-void buzzer_off(void);
+// Stop the buzzer
+void buzzer_stop(void);

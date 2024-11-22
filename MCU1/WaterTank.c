@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <pico/stdlib.h>
+#include <time.h>
 
 // Actuator Drivers
 #include <Drivers/Actuators/LED/LED.h>
@@ -30,9 +31,6 @@
 
 
 int main() {
-    // Period for ultrasonic sensor needs to be at least 20ms or
-    // else it may have an error at the rated 2m range
-    const uint32_t us_period = 30;
 
     // Initialize actuators
 
@@ -57,30 +55,51 @@ int main() {
 
         // Check if the tank is full
         if (is_tank_full()) {
+            clock_t start_comm = clock();
             uart_send_message("3 Water level is high \n");  // Send message via UART
+            clock_t end_comm = clock();
+            double comm_time = (double)(end_comm - start_comm) / CLOCKS_PER_SEC;
+        printf("UART Communication Time: %f seconds\n", comm_time);
+
             pump_off();    // Turn off the pump
         } else {
             // Measure distance using ultrasonic sensor
+            clock_t start_sensor = clock();
             uint16_t distance = ultrasonic_get_distance();
+            clock_t end_sensor = clock();
+            double sensor_time = (double)(end_sensor - start_sensor) / CLOCKS_PER_SEC;
+            printf("Distance Sensor Update Time: %f seconds\n", sensor_time);
 
             // Check if the ultrasonic sensor has an error
-            if (distance == (uint16_t)-1) {
+            if (distance < (uint16_t)0) {
+                clock_t start_comm = clock();
                 uart_send_message("4 Ultrasonic sensor error\n");  // Send error via UART
+                clock_t end_comm = clock();
+                double comm_time = (double)(end_comm - start_comm) / CLOCKS_PER_SEC;
+                printf("UART Communication Time: %f seconds\n", comm_time);
                 }
             else {
                 // Check if the tank is empty
                 if (distance > 30) { // 30 cm is the maximum distance for the tank
+                    clock_t start_comm = clock();
                     uart_send_message("1 Water level is low\n");  // Send message via UART
+                    clock_t end_comm = clock();
+                    double comm_time = (double)(end_comm - start_comm) / CLOCKS_PER_SEC;
+                    //printf("UART Communication Time: %f seconds\n", comm_time);
                     pump_on();   // Turn on the pump
-                } else {
+                    }
+                else {
+                    clock_t start_comm = clock();
                     uart_send_message("2 Water level is normal\n"); // Send water level via UART
+                    clock_t end_comm = clock();
+                    double comm_time = (double)(end_comm - start_comm) / CLOCKS_PER_SEC;
+                    //printf("UART Communication Time: %f seconds\n", comm_time);
                     pump_off();    // Turn off the pump
                 }
             }
         }
 
-        sleep_ms(500);  // Delay for readability
-        sleep_ms(us_period);
+        sleep_ms(1000);  // Sleep for 1 second
         pico_set_led(false);
     }
 

@@ -9,7 +9,6 @@
 
 #ifndef ULTRASONIC_TIMEOUT
 #define ULTRASONIC_TIMEOUT 200000 // 200 ms
-
 #endif 
 
 #ifndef ULTRASONIC_MIN_DISTANCE
@@ -32,7 +31,6 @@
 #define ULTRASONIC_ERROR_OUT_OF_RANGE -3
 #endif
 
-
 // Initializes the ultrasonic sensor
 void ultrasonic_sensor_init(uint trig_pin, uint echo_pin);
 
@@ -40,3 +38,6 @@ void ultrasonic_sensor_init(uint trig_pin, uint echo_pin);
 // Returns distance in cm
 float ultrasonic_get_distance();
 
+// Measures the distance using the ultrasonic sensor multiple times and returns the average distance
+// Returns distance in cm
+float ultrasonic_get_average_distance(int num_samples);
