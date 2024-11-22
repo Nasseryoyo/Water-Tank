@@ -8,6 +8,7 @@
 
 // Sensor Drivers
 #include <Drivers/Sensors/UltraSonic/UltraSonic.h>
+#include <Drivers/Sensors/IR/IR.h>
 #include <Drivers/Sensors/WaterLevel/WaterLevel.h>
 
 // Communication Drivers
@@ -15,6 +16,9 @@
 
 // Define the pins for the water level sensor
 #define WATER_LEVEL_PIN 9
+
+// Define the pins for the IR sensor
+#define IR_PIN 10
 
 // Define the pins for the ultrasonic sensor
 #define TRIG_PIN 15
@@ -42,6 +46,7 @@ int main() {
     // Initialize the Sensors
     ultrasonic_sensor_init(TRIG_PIN, ECHO_PIN);  // Initialize the ultrasonic sensor
     water_level_sensor_init(WATER_LEVEL_PIN);    // Initialize the water level sensor
+    ir_sensor_init(IR_PIN);                      // Initialize the IR sensor
 
     stdio_usb_init();
 
@@ -71,7 +76,7 @@ int main() {
             printf("Distance Sensor Update Time: %f seconds\n", sensor_time);
 
             // Check if the ultrasonic sensor has an error
-            if (distance < (uint16_t)0) {
+            if (distance < 0) {
                 clock_t start_comm = clock();
                 uart_send_message("4 Ultrasonic sensor error\n");  // Send error via UART
                 clock_t end_comm = clock();
