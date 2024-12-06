@@ -72,10 +72,7 @@ int main()
         LCDdisplay_print(&lcd, "Waiting for UART");
 
         // receive a message over UART
-        clock_t start = clock();
         char *received_msg = uart_receive_message();
-        clock_t end = clock();
-        printf("Time taken to receive message: %f\n", (double)(end - start) / CLOCKS_PER_SEC);
         if  (received_msg != NULL)
         {
             printf("Received message: %s\n", received_msg);

@@ -26,6 +26,7 @@
 
 // Define the GPIO pin connected to the pump
 #define PUMP_PIN 18
+#define PUMP_2_PIN 19
 
 // Define the UART parameters
 #define UART_BAUD_RATE 9600
@@ -37,8 +38,8 @@
 int main() {
 
     // Initialize actuators
-
-    pump_init(PUMP_PIN);
+    int pump_id =  pump_init(PUMP_PIN);
+    int pump_2_id = pump_init(PUMP_2_PIN);
 
     int rc = pico_led_init();
     hard_assert(rc == PICO_OK);
@@ -60,48 +61,29 @@ int main() {
 
         // Check if the tank is full
         if (is_tank_full()) {
-            clock_t start_comm = clock();
             uart_send_message("3 Water level is high \n");  // Send message via UART
-            clock_t end_comm = clock();
-            double comm_time = (double)(end_comm - start_comm) / CLOCKS_PER_SEC;
-        printf("UART Communication Time: %f seconds\n", comm_time);
-
-            pump_off();    // Turn off the pump
-        } else {
+            pump_off(pump_id);    // Turn off the pump
+            pump_on(pump_2_id);  // Turn off the pump
+            }
+        else {
             // Measure distance using ultrasonic sensor
-            bool ir_detect = ir_sensor_detect();
-            clock_t start_sensor = clock();
             uint16_t distance = ultrasonic_get_distance();
-            clock_t end_sensor = clock();
-            double sensor_time = (double)(end_sensor - start_sensor) / CLOCKS_PER_SEC;
-            printf("Distance Sensor Update Time: %f seconds\n", sensor_time);
-
             // Check if the ultrasonic sensor has an error
             if (distance < 0) {
-                clock_t start_comm = clock();
                 uart_send_message("4 Ultrasonic sensor error\n");  // Send error via UART
-                clock_t end_comm = clock();
-                double comm_time = (double)(end_comm - start_comm) / CLOCKS_PER_SEC;
-                // printf("UART Communication Time: %f seconds\n", comm_time);
                 }
             else {
                 // Check if the tank is empty
                 if (distance > 15) { // 15 cm is the maximum distance for the tank
-                    clock_t start_comm = clock();
                     uart_send_message("1 Water level is low\n");  // Send message via UART
-                    clock_t end_comm = clock();
-                    double comm_time = (double)(end_comm - start_comm) / CLOCKS_PER_SEC;
-                    // printf("UART Communication Time: %f seconds\n", comm_time);
-                    pump_on();   // Turn on the pump
+                    pump_on(pump_id);   // Turn on the pump
+                    pump_off(pump_2_id); // Turn on the pump
                     }
                 else {
-                    clock_t start_comm = clock();
                     uart_send_message("2 Water level is normal\n"); // Send water level via UART
-                    clock_t end_comm = clock();
-                    double comm_time = (double)(end_comm - start_comm) / CLOCKS_PER_SEC;
-                    // printf("UART Communication Time: %f seconds\n", comm_time);
-                    pump_off();    // Turn off the pump
-                }
+                    pump_off(pump_id);    // Turn off the pump
+                    pump_off(pump_2_id);  // Turn off the pump
+                    }
             }
         }
 
