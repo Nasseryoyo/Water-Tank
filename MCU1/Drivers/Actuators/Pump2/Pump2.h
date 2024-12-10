@@ -3,13 +3,13 @@
 #include <pico/stdlib.h>
 
 // Initialize the water pump with the specified GPIO pin
-void pump_init(uint pin);
+void pump2_init(uint pin);
 
 // Turn the pump on
-void pump_on(void);
+void pump2_on(void);
 
 // Turn the pump off
-void pump_off(void);
+void pump2_off(void);
 
 
 

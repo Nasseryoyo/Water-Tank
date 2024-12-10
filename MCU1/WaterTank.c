@@ -5,6 +5,8 @@
 // Actuator Drivers
 #include <Drivers/Actuators/LED/LED.h>
 #include <Drivers/Actuators/Pump/Pump.h>
+#include <Drivers/Actuators/Pump2/Pump2.h>
+
 
 // Sensor Drivers
 #include <Drivers/Sensors/UltraSonic/UltraSonic.h>
@@ -38,8 +40,8 @@
 int main() {
 
     // Initialize actuators
-    int pump_id =  pump_init(PUMP_PIN);
-    int pump_2_id = pump_init(PUMP_2_PIN);
+     pump_init(PUMP_PIN);
+     pump2_init(PUMP_2_PIN);
 
     int rc = pico_led_init();
     hard_assert(rc == PICO_OK);
@@ -62,8 +64,8 @@ int main() {
         // Check if the tank is full
         if (is_tank_full()) {
             uart_send_message("3 Water level is high \n");  // Send message via UART
-            pump_off(pump_id);    // Turn off the pump
-            pump_on(pump_2_id);  // Turn off the pump
+            pump_off();    // Turn off the pump
+            pump2_on();  // Turn off the pump
             }
         else {
             // Measure distance using ultrasonic sensor
@@ -71,18 +73,20 @@ int main() {
             // Check if the ultrasonic sensor has an error
             if (distance < 0) {
                 uart_send_message("4 Ultrasonic sensor error\n");  // Send error via UART
+                pump2_off();
+                pump_off();
                 }
             else {
                 // Check if the tank is empty
                 if (distance > 15) { // 15 cm is the maximum distance for the tank
                     uart_send_message("1 Water level is low\n");  // Send message via UART
-                    pump_on(pump_id);   // Turn on the pump
-                    pump_off(pump_2_id); // Turn on the pump
+                    pump_on();   // Turn on the pump
+                    pump2_off(); // Turn on the pump
                     }
                 else {
                     uart_send_message("2 Water level is normal\n"); // Send water level via UART
-                    pump_off(pump_id);    // Turn off the pump
-                    pump_off(pump_2_id);  // Turn off the pump
+                    pump_off();    // Turn off the pump
+                    pump2_off();  // Turn off the pump
                     }
             }
         }
