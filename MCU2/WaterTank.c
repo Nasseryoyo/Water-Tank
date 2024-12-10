@@ -48,7 +48,7 @@ void led_task()
     }
     }
 
-void uart_task()
+void uart_task(void *pvParameters)
     {
 
     // Initialize the UART communication
@@ -70,7 +70,7 @@ void uart_task()
         }
     }
 
-void buzzer_lcd_task()
+void buzzer_lcd_task(void *pvParameters)
     {
     buzzer_init(BUZZER_PIN);
 
