@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <pico/stdlib.h>
 #include <time.h>
+#include <FreeRTOS.h>
+#include <task.h>
+#include <queue.h>
 
 // Actuator Drivers
 #include <Drivers/Actuators/LED/LED.h>
@@ -14,8 +17,6 @@
 // Define the GPIO pin for the buzzer
 #define BUZZER_PIN 16
 
-// Define the LED_Strip Pin
-#define LED_Strip_PIN 17
 // Define the GPIO pins for the LCD
 #define LCD_PIN_D4 6
 #define LCD_PIN_D5 7
@@ -33,18 +34,45 @@
 
 LCDdisplay lcd;
 
-int main()
-{
-    // Initialize actuators
-    buzzer_init(BUZZER_PIN);
-    LED_Strip_init(LED_Strip_PIN);
+static QueueHandle_t xQueue = NULL;
+
+void led_task()
+{   
     int rc = pico_led_init();
     hard_assert(rc == PICO_OK);
+    while (true) {
+        pico_set_led(true);
+        vTaskDelay(100);
+        pico_set_led(false);
+        vTaskDelay(100);
+    }
+    }
 
-    stdio_usb_init(); // Initialize stdio for debugging
+void uart_task()
+    {
 
     // Initialize the UART communication
     uint bandRate = uart_init_config(UART_ID, TX_PIN, RX_PIN, UART_BAUD_RATE);
+
+    printf("UART Initialized on Baud rate : %d\n",bandRate);  // Print message via stdio
+
+    while (true) {
+        // receive a message over UART
+
+        char* received_msg = uart_receive_message();
+
+
+        // Send the received message to the other task
+        xQueueSend(xQueue, &received_msg[0], portMAX_DELAY);
+
+        // Print the received message
+        printf("Received message: %s\n", received_msg);
+        }
+    }
+
+void buzzer_lcd_task()
+    {
+    buzzer_init(BUZZER_PIN);
 
     // Initialize the LCD display
     LCDdisplay_init_with_bl(&lcd,
@@ -60,27 +88,12 @@ int main()
     // Initialize the LCD display
     LCDdisplay_init_display(&lcd);
 
-    LCDdisplay_init_display(&lcd);
-
+    char uIReceivedValue;
     while (true) {
-        pico_set_led(true);
-
-        printf("UART Initialized on Baud rate : %d\n",bandRate);  // Print message via stdio
-
-        // Clear the LCD and display a welcome message
         LCDdisplay_clear(&lcd);
         LCDdisplay_print(&lcd, "Waiting for UART");
-
-        // receive a message over UART
-        char *received_msg = uart_receive_message();
-        if  (received_msg != NULL)
-        {
-            printf("Received message: %s\n", received_msg);
-
-            // Clear LCD and display appropriate messages
-            LCDdisplay_clear(&lcd);
-
-            switch (received_msg[0])
+        LCDdisplay_clear(&lcd);
+        switch (uIReceivedValue)
             {
             case '1':
                 LCDdisplay_print(&lcd, "Water level:");
@@ -111,11 +124,24 @@ int main()
                 buzzer_play_tone(100); // Low frequency for error
                 break;
             }
-        }
-        
-        sleep_ms(1000);
-        pico_set_led(false);
     }
+    }
+
+int main()
+    {
+
+    xQueue = xQueueCreate(1, sizeof(char));
+
+    xTaskCreate(led_task, "LED_Task", 256, NULL, 1, NULL);
+    xTaskCreate(uart_task, "UART_Task", 256, NULL, 1, NULL);
+    xTaskCreate(buzzer_lcd_task, "Buzzer_LCD_Task", 256, NULL, 1, NULL);
+
+    vTaskStartScheduler();
+    // Initialize actuators
+    stdio_usb_init(); // Initialize stdio for debugging
+    while (true) {
+        tight_loop_contents();
+        }
 
     return 0;
 }
