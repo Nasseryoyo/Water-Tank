@@ -129,6 +129,7 @@ void buzzer_lcd_task()
 
 int main()
     {
+    stdio_usb_init(); // Initialize stdio for debugging
 
     xQueue = xQueueCreate(1, sizeof(char));
 
@@ -138,7 +139,7 @@ int main()
 
     vTaskStartScheduler();
     // Initialize actuators
-    stdio_usb_init(); // Initialize stdio for debugging
+
     while (true) {
         tight_loop_contents();
         }
