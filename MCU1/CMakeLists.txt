@@ -65,6 +65,8 @@ set(HEADERS
     ${DRIVERS_HEADERS}
 )
 
+add_subdirectory(freertos)
+
 # Add executable. Default name is the project name, version 0.1
 
 add_executable(WaterTank ${SOURCES})
@@ -77,7 +79,7 @@ pico_enable_stdio_usb(WaterTank 1)
 
 # Add the standard library to the build
 target_link_libraries(WaterTank
-        pico_stdlib)
+        pico_stdlib freertos)
 
 # Add the standard include files to the build
 target_include_directories(WaterTank PRIVATE

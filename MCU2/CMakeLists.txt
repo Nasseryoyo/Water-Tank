@@ -64,10 +64,17 @@ pico_sdk_init()
 # Find all source files in the Drivers folder and its subdirectories
 file(GLOB_RECURSE DRIVERS_SOURCES "${CMAKE_CURRENT_LIST_DIR}/Drivers/**/*.c")
 
+# Find all header files in the Drivers folder and its subdirectories
+file(GLOB_RECURSE DRIVERS_HEADERS "${CMAKE_CURRENT_LIST_DIR}/Drivers/**/*.h")
 # Add the main source file
 set(SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/WaterTank.c"
     ${DRIVERS_SOURCES}
+)
+
+# Add the main header file
+set(HEADERS
+    ${DRIVERS_HEADERS}
 )
 
 add_subdirectory(freertos)
