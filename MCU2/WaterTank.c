@@ -63,9 +63,23 @@ void uart_task(void *pvParameters)
 
         // Print the received message
         printf("Received message: %s\n", received_msg);
-        // Send the received message to the other task
-        xQueueSend(xQueue, &received_msg[0], portMAX_DELAY);
 
+        if (received_msg != NULL) {
+
+            switch (received_msg[0])
+            {
+                    case '1':
+                    case '2':
+                    case '3':
+                        // Send the received message to the other task
+                        xQueueSend(xQueue, &received_msg[0], portMAX_DELAY);
+                        break;
+            
+            default:
+                break;
+            }
+
+        }
 
         }
     }
