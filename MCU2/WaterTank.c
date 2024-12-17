@@ -90,6 +90,7 @@ void buzzer_lcd_task(void *pvParameters)
 
     char uIReceivedValue;
     while (true) {
+        xQueueReceive(xQueue, &uIReceivedValue, portMAX_DELAY);
         LCDdisplay_clear(&lcd);
         LCDdisplay_print(&lcd, "Waiting for UART");
         LCDdisplay_clear(&lcd);
